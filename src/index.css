@@ -1,0 +1,125 @@
+/* Importar Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importar fuentes de Google */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* Estilos base globales */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-neutral-cream text-gray-800 font-sans antialiased;
+    @apply min-h-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  h1 {
+    @apply text-display font-light tracking-wide;
+  }
+
+  h2 {
+    @apply text-heading font-light;
+  }
+
+  h3 {
+    @apply text-subheading font-normal;
+  }
+}
+
+/* Componentes personalizados */
+@layer components {
+  /* Botón femenino suave */
+  .btn-primary {
+    @apply px-8 py-3 bg-primary-200 text-gray-800 rounded-soft;
+    @apply font-sans text-small font-medium tracking-wide;
+    @apply transition-all duration-300 ease-in-out;
+    @apply hover:bg-primary-400 hover:shadow-soft;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3 bg-white border border-primary-200 text-gray-800 rounded-soft;
+    @apply font-sans text-small font-medium tracking-wide;
+    @apply transition-all duration-300 ease-in-out;
+    @apply hover:bg-primary-50 hover:border-primary-400;
+  }
+
+  /* Tarjeta de producto */
+  .product-card {
+    @apply bg-white rounded-card shadow-soft;
+    @apply transition-all duration-300 ease-in-out;
+    @apply hover:shadow-hover hover:-translate-y-1;
+  }
+
+  /* Input estilo femenino */
+  .input-soft {
+    @apply w-full px-4 py-3 bg-white border border-primary-200 rounded-soft;
+    @apply focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-200;
+    @apply transition-all duration-200;
+  }
+
+  /* Contenedor suave */
+  .container-soft {
+    @apply max-w-7xl mx-auto px-6 py-12;
+  }
+}
+
+/* Utilidades personalizadas */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gradient-shekina {
+    background: linear-gradient(135deg, #FDF6F0 0%, #EAC7CE 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #DCC9AA 0%, #CE7A67 100%);
+  }
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Scrollbar personalizado (opcional pero elegante) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FDF6F0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #EAC7CE;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C9A0A9;
+}
