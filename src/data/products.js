@@ -115,9 +115,9 @@ export const products = [
     price: 3200 * 1.5,
     costPrice: 3200,
     description: 'Tinta ligera de acabado natural. Ideal para uso diario gracias a su fórmula suave.',
-    image: 'https://res.cloudinary.com/dhtwrqrhb/image/upload/v1764539597/e002ccf5-a6a2-415f-8f69-3f981c3078a0.png',
+    image: 'https://res.cloudinary.com/dhtwrqrhb/image/upload/v1764539603/a20e7e7c-b275-4125-ae4e-909bfc728fc5.png',
     images: [
-      'https://res.cloudinary.com/dhtwrqrhb/image/upload/v1764539597/e002ccf5-a6a2-415f-8f69-3f981c3078a0.png',
+      'https://res.cloudinary.com/dhtwrqrhb/image/upload/v1764539603/a20e7e7c-b275-4125-ae4e-909bfc728fc5.png',
       'https://res.cloudinary.com/dhtwrqrhb/image/upload/v1764539591/4d9f7db7-020e-429c-86d1-abed99eaec7d.png',
       '',
       ''
