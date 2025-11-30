@@ -170,3 +170,68 @@
 .rounded-soft {
   border-radius: 12px;
 }
+
+/* Agrega estos estilos a tu archivo index.css */
+
+/* Botón primario */
+.btn-primary {
+  @apply bg-accent-terracota text-white px-6 py-3 rounded-soft 
+         font-sans font-medium transition-all duration-300 
+         hover:bg-accent-terracota/90 hover:shadow-lg 
+         active:scale-95;
+}
+
+/* Botón secundario */
+.btn-secondary {
+  @apply bg-white text-accent-terracota border-2 border-accent-terracota 
+         px-6 py-3 rounded-soft font-sans font-medium 
+         transition-all duration-300 
+         hover:bg-accent-terracota hover:text-white 
+         active:scale-95;
+}
+
+/* Sombras personalizadas */
+.shadow-soft {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-hover {
+  box-shadow: 0 4px 16px rgba(206, 122, 103, 0.15);
+}
+
+/* Bordes suaves */
+.rounded-soft {
+  border-radius: 12px;
+}
+
+/* ========================================
+   ANIMACIÓN SUAVE Y DELICADA DE FADE-IN
+   ======================================== */
+@keyframes softFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-softFadeIn {
+  animation: softFadeIn 0.4s ease-in-out;
+}
+
+/* Animación alternativa con sutil movimiento (opcional) */
+@keyframes gentleAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-gentleAppear {
+  animation: gentleAppear 0.5s ease-out;
+}

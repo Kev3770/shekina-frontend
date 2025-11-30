@@ -11,9 +11,11 @@ import {
   Check,
   AlertCircle,
   Star,
-  ZoomIn
+  ZoomIn,
+  MessageCircle
 } from 'lucide-react';
 import { products } from '../data/products';
+import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
 
 const categories = {
@@ -28,22 +30,21 @@ const categories = {
 const ProductDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { addToCart, formatPrice } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showZoom, setShowZoom] = useState(false);
 
   // Buscar producto por slug
   const product = products.find(p => p.slug === slug);
 
-  // Galería de imágenes (en producción vendrían del producto)
-  const productImages = product ? [
-    product.image,
-    product.image, // Ángulo 2
-    product.image, // Ángulo 3
-    product.image, // Ángulo 4
-  ] : [];
+  // ✅ MEJORADO: Galería de imágenes con fallback inteligente
+  const productImages = product 
+    ? (product.images && product.images.length > 0 
+        ? product.images 
+        : [product.image])
+    : [];
 
   // Productos relacionados (misma categoría, excluyendo el actual)
   const relatedProducts = product 
@@ -61,7 +62,9 @@ const ProductDetail = () => {
     : [];
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    // Resetear imagen seleccionada al cambiar de producto
+    setSelectedImage(0);
   }, [slug]);
 
   // Si no encuentra el producto
@@ -88,18 +91,17 @@ const ProductDetail = () => {
     );
   }
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(price);
-  };
-
   const handleQuantityChange = (delta) => {
     const newQuantity = quantity + delta;
-    if (newQuantity >= 1 && newQuantity <= product.stock) {
+    if (newQuantity >= 1) {
       setQuantity(newQuantity);
+    }
+  };
+
+  // Agregar al carrito con la cantidad seleccionada
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product);
     }
   };
 
@@ -138,7 +140,7 @@ const ProductDetail = () => {
       {/* Breadcrumb */}
       <div className="bg-white border-b border-primary-100">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-gray-600 flex-wrap">
             <Link to="/" className="hover:text-accent-terracota transition-colors">
               Inicio
             </Link>
@@ -179,6 +181,7 @@ const ProductDetail = () => {
               <button
                 onClick={() => setShowZoom(true)}
                 className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label="Ampliar imagen"
               >
                 <ZoomIn size={20} className="text-gray-700" />
               </button>
@@ -190,37 +193,41 @@ const ProductDetail = () => {
                     ⭐ Destacado
                   </span>
                 )}
-                {product.stock <= 2 && product.inStock && (
-                  <span className="bg-amber-500 text-white text-xs font-sans px-3 py-1 rounded-full shadow-lg">
-                    ⚡ Últimas {product.stock} unidades
-                  </span>
-                )}
               </div>
+
+              {/* ✅ Indicador de imagen actual (si hay múltiples) */}
+              {productImages.length > 1 && (
+                <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs px-3 py-1 rounded-full">
+                  {selectedImage + 1} / {productImages.length}
+                </div>
+              )}
             </div>
             
-            {/* Thumbnails - Múltiples ángulos */}
-            <div className="grid grid-cols-4 gap-3">
-              {productImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`
-                    aspect-square bg-white rounded-soft shadow-soft overflow-hidden
-                    transition-all duration-300
-                    ${selectedImage === idx 
-                      ? 'ring-2 ring-accent-terracota scale-95' 
-                      : 'hover:scale-95 opacity-70 hover:opacity-100'
-                    }
-                  `}
-                >
-                  <img
-                    src={img}
-                    alt={`Vista ${idx + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+            {/* ✅ Thumbnails - Solo se muestran si hay más de 1 imagen */}
+            {productImages.length > 1 && (
+              <div className="grid grid-cols-4 gap-3">
+                {productImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(idx)}
+                    className={`
+                      aspect-square bg-white rounded-soft shadow-soft overflow-hidden
+                      transition-all duration-300
+                      ${selectedImage === idx 
+                        ? 'ring-2 ring-accent-terracota scale-95' 
+                        : 'hover:scale-95 opacity-70 hover:opacity-100'
+                      }
+                    `}
+                  >
+                    <img
+                      src={img}
+                      alt={`Vista ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* INFORMACIÓN DEL PRODUCTO */}
@@ -271,7 +278,7 @@ const ProductDetail = () => {
                 <>
                   <Check className="text-green-600" size={20} />
                   <span className="text-green-600 font-sans text-sm font-medium">
-                    Disponible ({product.stock} en stock)
+                    Disponible
                   </span>
                 </>
               ) : (
@@ -295,7 +302,7 @@ const ProductDetail = () => {
             </div>
 
             {/* Colores */}
-            {product.colors.length > 0 && product.colors[0] !== 'transparent' && (
+            {product.colors && product.colors.length > 0 && product.colors[0] !== 'transparent' && (
               <div className="space-y-3">
                 <h3 className="font-sans font-semibold text-gray-800">
                   Colores disponibles
@@ -338,8 +345,7 @@ const ProductDetail = () => {
                 </span>
                 <button
                   onClick={() => handleQuantityChange(1)}
-                  disabled={quantity >= product.stock}
-                  className="w-12 h-12 rounded-soft bg-white border-2 border-primary-200 text-gray-800 font-sans font-bold text-xl hover:bg-primary-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-12 h-12 rounded-soft bg-white border-2 border-primary-200 text-gray-800 font-sans font-bold text-xl hover:bg-primary-50 transition-colors"
                 >
                   +
                 </button>
@@ -347,41 +353,37 @@ const ProductDetail = () => {
             </div>
 
             {/* Acciones principales */}
-            <div className="flex gap-3 pt-4">
+            <div className="flex flex-col gap-3 pt-4">
+              {/* Botón Añadir al Carrito */}
               <button
-                onClick={handleWhatsAppContact}
+                onClick={handleAddToCart}
                 disabled={!product.inStock}
-                className="flex-1 btn-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                className="w-full btn-primary py-4 text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
               >
                 <ShoppingCart size={22} />
-                <span className="font-medium">Comprar por WhatsApp</span>
-              </button>
-              
-              <button
-                onClick={() => setIsFavorite(!isFavorite)}
-                className={`
-                  w-16 h-16 rounded-soft border-2 transition-all duration-300
-                  ${isFavorite 
-                    ? 'bg-accent-terracota border-accent-terracota text-white scale-95' 
-                    : 'bg-white border-primary-200 text-gray-600 hover:border-accent-terracota hover:scale-95'
-                  }
-                `}
-                aria-label="Agregar a favoritos"
-              >
-                <Heart 
-                  size={26} 
-                  className="mx-auto"
-                  fill={isFavorite ? 'currentColor' : 'none'}
-                />
+                <span className="font-medium">Añadir al carrito</span>
               </button>
 
+              {/* Botón WhatsApp */}
               <button
-                onClick={handleShare}
-                className="w-16 h-16 rounded-soft bg-white border-2 border-primary-200 text-gray-600 hover:border-accent-terracota hover:scale-95 transition-all"
-                aria-label="Compartir"
+                onClick={handleWhatsAppContact}
+                className="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-soft font-sans font-medium transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
               >
-                <Share2 size={26} className="mx-auto" />
+                <MessageCircle size={22} />
+                <span>Consultar por WhatsApp</span>
               </button>
+
+              {/* Botones secundarios */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleShare}
+                  className="flex-1 h-14 rounded-soft bg-white border-2 border-primary-200 text-gray-600 hover:border-accent-terracota hover:scale-95 transition-all flex items-center justify-center gap-2"
+                  aria-label="Compartir"
+                >
+                  <Share2 size={24} />
+                  <span className="text-sm font-sans">Compartir</span>
+                </button>
+              </div>
             </div>
 
             {/* Beneficios */}
@@ -475,6 +477,7 @@ const ProductDetail = () => {
           <button
             className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
             onClick={() => setShowZoom(false)}
+            aria-label="Cerrar zoom"
           >
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
