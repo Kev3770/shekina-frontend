@@ -13,6 +13,8 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // Cargar carrito del localStorage al iniciar
   useEffect(() => {
@@ -22,9 +24,13 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
-  // Guardar carrito en localStorage cada vez que cambie
+  // Guardar con debounce
   useEffect(() => {
-    localStorage.setItem('shekina-cart', JSON.stringify(cart));
+    const timeoutId = setTimeout(() => {
+      localStorage.setItem('shekina-cart', JSON.stringify(cart));
+    }, 500);
+    
+    return () => clearTimeout(timeoutId);
   }, [cart]);
 
   // Agregar producto al carrito
@@ -33,28 +39,25 @@ export const CartProvider = ({ children }) => {
       const existingItem = prevCart.find(item => item.id === product.id);
       
       if (existingItem) {
-        // Si ya existe, aumentar cantidad
         return prevCart.map(item =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        // Si no existe, agregar nuevo
         return [...prevCart, { ...product, quantity }];
       }
     });
     
-    // Mostrar notificación (opcional)
-    setIsCartOpen(true);
+    // ✅ Mostrar toast en lugar de abrir carrito
+    setToastMessage(`${product.name} agregado al carrito`);
+    setShowToast(true);
   };
 
-  // Remover producto del carrito
   const removeFromCart = (productId) => {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
   };
 
-  // Actualizar cantidad
   const updateQuantity = (productId, quantity) => {
     if (quantity <= 0) {
       removeFromCart(productId);
@@ -68,34 +71,12 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // Limpiar carrito
   const clearCart = () => {
     setCart([]);
   };
 
-  // Calcular total
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
-  // Calcular cantidad total de items
   const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  // Generar mensaje de WhatsApp
-  const generateWhatsAppMessage = () => {
-    let message = '🛍️ *PEDIDO DESDE SHEKINA*\n\n';
-    message += '📋 *Lista de productos:*\n\n';
-    
-    cart.forEach((item, index) => {
-      message += `${index + 1}. *${item.name}*\n`;
-      message += `   • Cantidad: ${item.quantity}\n`;
-      message += `   • Precio unitario: ${formatPrice(item.price)}\n`;
-      message += `   • Subtotal: ${formatPrice(item.price * item.quantity)}\n\n`;
-    });
-    
-    message += `💰 *TOTAL: ${formatPrice(total)}*\n\n`;
-    message += '✨ Me gustaría confirmar la disponibilidad y coordinar el pago.';
-    
-    return message;
-  };
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('es-CO', {
@@ -105,10 +86,26 @@ export const CartProvider = ({ children }) => {
     }).format(price);
   };
 
-  // Enviar pedido a WhatsApp
+  const generateWhatsAppMessage = () => {
+    let message = 'Hola quiero realizar este pedido\n\n';
+    message += ' *Lista de productos:*\n\n';
+    
+    cart.forEach((item, index) => {
+      message += `${index + 1}. *${item.name}*\n`;
+      message += `   • Cantidad: ${item.quantity}\n`;
+      message += `   • Precio unitario: ${formatPrice(item.price)}\n`;
+      message += `   • Subtotal: ${formatPrice(item.price * item.quantity)}\n\n`;
+    });
+    
+    message += ` *TOTAL: ${formatPrice(total)}*\n\n`;
+    message += ' Me gustaría confirmar la disponibilidad y coordinar el pago.';
+    
+    return message;
+  };
+
   const sendToWhatsApp = () => {
     const message = generateWhatsAppMessage();
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/573113524429?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -125,7 +122,11 @@ export const CartProvider = ({ children }) => {
         isCartOpen,
         setIsCartOpen,
         sendToWhatsApp,
-        formatPrice
+        formatPrice,
+        // ✅ Toast state
+        toastMessage,
+        showToast,
+        setShowToast
       }}
     >
       {children}

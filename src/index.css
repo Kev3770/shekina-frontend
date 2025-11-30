@@ -123,3 +123,50 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #C9A0A9;
 }
+
+/* src/index.css */
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Botón primario (ya lo tienes) */
+.btn-primary {
+  @apply bg-accent-terracota text-white px-6 py-3 rounded-soft 
+         font-sans font-medium transition-all duration-300 
+         hover:bg-accent-terracota/90 hover:shadow-lg 
+         active:scale-95;
+}
+
+/* Botón secundario (nuevo) */
+.btn-secondary {
+  @apply bg-white text-accent-terracota border-2 border-accent-terracota 
+         px-6 py-3 rounded-soft font-sans font-medium 
+         transition-all duration-300 
+         hover:bg-accent-terracota hover:text-white 
+         active:scale-95;
+}
+
+/* Sombras personalizadas (ya las tienes pero las dejo por si acaso) */
+.shadow-soft {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-hover {
+  box-shadow: 0 4px 16px rgba(206, 122, 103, 0.15);
+}
+
+/* Bordes suaves */
+.rounded-soft {
+  border-radius: 12px;
+}

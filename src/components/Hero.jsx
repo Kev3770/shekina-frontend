@@ -32,14 +32,20 @@ const Hero = () => {
 
             {/* Título principal */}
             <h1 className="text-4xl md:text-6xl font-serif text-gray-800 leading-tight">
-              Belleza que
-              <span className="block text-accent-terracota">te hace brillar</span>
+              Shekina
+              <span className="block text-accent-terracota">creadas para brillar</span>
             </h1>
 
             {/* Descripción */}
             <p className="text-lg text-gray-600 font-sans leading-relaxed max-w-lg">
-              Descubre nuestra colección de maquillaje cuidadosamente seleccionada. 
-              Productos de calidad con diseños adorables que te harán sentir especial.
+              Aquí el maquillaje no es solo un producto… es la sensación de mirarte y decir:
+              “Así me gusta verme.”
+              <br />
+              Elegimos cada detalle con amor, delicadeza  y glamour,
+              para que cuando pruebes algo de aquí sientas esa confianza , esa emoción bonita…
+              esa magia que no te da cualquier lugar.
+              <br />
+              Shekina: donde tu belleza se siente, no solo se ve. 💗
             </p>
 
             {/* Botones */}
@@ -53,7 +59,7 @@ const Hero = () => {
               </button>
               
               <a 
-                href="https://wa.me/573001234567?text=Hola! Me gustaría conocer más sobre sus productos de belleza"
+                href="https://wa.me/573113524429?text=Hola! Me gustaría conocer más sobre sus productos de belleza"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-secondary flex items-center justify-center gap-2 text-base px-8 py-4"
@@ -68,7 +74,7 @@ const Hero = () => {
             {/* Stats */}
             <div className="flex flex-wrap gap-8 pt-8 border-t border-gray-200">
               <div>
-                <div className="text-3xl font-serif text-accent-terracota">39+</div>
+                <div className="text-3xl font-serif text-accent-terracota">60+</div>
                 <div className="text-sm text-gray-600 font-sans">Productos</div>
               </div>
               <div>
@@ -106,8 +112,8 @@ const Hero = () => {
                     <Sparkles size={24} className="text-white" />
                   </div>
                   <div>
-                    <div className="text-sm font-sans text-gray-600">Envíos a</div>
-                    <div className="text-lg font-serif text-gray-800">Popayán</div>
+                    <div className="text-sm font-sans text-gray-600">Envíos a todo</div>
+                    <div className="text-lg font-serif text-gray-800">Colombia</div>
                   </div>
                 </div>
               </div>

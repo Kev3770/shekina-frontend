@@ -1,10 +1,12 @@
-import { MessageCircle, ShoppingBag } from 'lucide-react';
+import { MessageCircle, ShoppingBag, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { addToCart, formatPrice } = useCart();
+  const navigate = useNavigate();
 
   const formatPriceLocal = (price) => {
     return formatPrice(price);
@@ -26,14 +28,21 @@ Precio: ${formatPriceLocal(product.price)}
 
 ¿Está disponible?`;
     
-    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/573113834058?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+  };
+
+  const handleImageClick = () => {
+    navigate(`/producto/${product.slug}`);
   };
 
   return (
     <div className="product-card group overflow-hidden">
       {/* Imagen del producto */}
-      <div className="relative overflow-hidden bg-primary-50 aspect-square">
+      <div 
+        className="relative overflow-hidden bg-primary-50 aspect-square cursor-pointer"
+        onClick={handleImageClick}
+      >
         {/* Badge de descuento */}
         {discount > 0 && (
           <div className="absolute top-3 left-3 bg-accent-terracota text-white px-3 py-1 rounded-full text-xs font-medium z-10">
@@ -66,22 +75,28 @@ Precio: ${formatPriceLocal(product.price)}
         {/* Overlay hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-        {/* Botones de acción (aparecen al hover) */}
+        {/* Botones de acción (aparecen al hover en desktop) */}
         <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 flex gap-2">
           <button 
-            onClick={handleAddToCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart();
+            }}
             className="flex-1 bg-white hover:bg-primary-50 text-gray-800 px-4 py-3 rounded-soft font-sans text-sm font-medium transition-all duration-300 shadow-hover flex items-center justify-center gap-2"
           >
             <ShoppingBag size={16} />
             <span>Agregar</span>
           </button>
           
-          <button 
-            onClick={handleWhatsAppClick}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/producto/${product.slug}`);
+            }}
             className="flex-1 btn-primary px-4 py-3 flex items-center justify-center gap-2 shadow-hover"
           >
-            <MessageCircle size={16} />
-            <span>Consultar</span>
+            <Eye size={16} />
+            <span>Ver más</span>
           </button>
         </div>
       </div>
@@ -107,8 +122,11 @@ Precio: ${formatPriceLocal(product.price)}
           </div>
         )}
 
-        {/* Nombre */}
-        <h3 className="text-base font-serif text-gray-800 mb-2 line-clamp-2 min-h-[3rem]">
+        {/* Nombre - Clickeable */}
+        <h3 
+          className="text-base font-serif text-gray-800 mb-2 line-clamp-2 min-h-[3rem] hover:text-accent-terracota transition-colors cursor-pointer"
+          onClick={handleImageClick}
+        >
           {product.name}
         </h3>
 
@@ -129,20 +147,6 @@ Precio: ${formatPriceLocal(product.price)}
           )}
         </div>
 
-        {/* Stock y botón de WhatsApp */}
-        <div className="flex items-center justify-between">
-          <span className={`text-xs ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
-            {product.inStock ? `Disponible (${product.stock})` : 'Agotado'}
-          </span>
-          
-          {/* Indicador de stock bajo */}
-          {product.inStock && product.stock <= 2 && (
-            <span className="text-xs text-orange-600 font-medium">
-              ¡Últimas unidades!
-            </span>
-          )}
-        </div>
-
         {/* Botones de acción mobile (visible siempre en móvil) */}
         <div className="md:hidden flex gap-2 mt-4">
           <button 
@@ -153,12 +157,12 @@ Precio: ${formatPriceLocal(product.price)}
             <span>Agregar</span>
           </button>
           
-          <button 
-            onClick={handleWhatsAppClick}
+          <button
+            onClick={handleImageClick}
             className="flex-1 btn-primary px-4 py-3 flex items-center justify-center gap-2"
           >
-            <MessageCircle size={16} />
-            <span>WhatsApp</span>
+            <Eye size={16} />
+            <span>Ver más</span>
           </button>
         </div>
       </div>
